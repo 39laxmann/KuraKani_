@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kurakani/auth/auth_service.dart';
 import 'package:kurakani/components/my_button.dart';
 import 'package:kurakani/components/my_textfields.dart';
 
@@ -13,7 +14,24 @@ class LoginPage extends StatelessWidget {
   //function to define what wi. ll happen user click on Register now button
   final void Function()? onTap;
   //login method, like when user click on login , this method is called
-  void login() {}
+  void login(BuildContext context) async {
+    debugPrint("Tapped login");
+    //first get auth service
+    final authService = AuthService();
+
+    //login
+    try {
+      await authService.signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(title: Text(e.toString())),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +106,7 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 28),
               //login now button
-              MyButton(buttonText: "Login", onTap: login),
+              MyButton(buttonText: "Login", onTap: () => login(context)),
               const SizedBox(height: 25),
 
               //register now
@@ -128,30 +146,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
-
-
-// RichText(
-//                 text: TextSpan(
-//                   text: "Don't have an account?",
-//                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-//                     color: Theme.of(context).colorScheme.primary,
-//                   ),
-//                   children: [
-//                     TextSpan(
-//                       text: " Register now",
-//                       style: TextStyle(
-//                         fontWeight: FontWeight.bold,
-//                         color: Theme.of(context).colorScheme.primary,
-//                         shadows: [
-//                           Shadow(
-//                             offset: Offset(1, 1),
-//                             blurRadius: 2,
-//                             color: Colors.black12,
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
