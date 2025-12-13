@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kurakani/auth/auth_service.dart';
 import 'package:kurakani/components/my_button.dart';
 import 'package:kurakani/components/my_textfields.dart';
 
@@ -16,7 +17,39 @@ class RegisterPage extends StatelessWidget {
   final void Function()? onTap;
 
   //register method, like when user click on register , this method is called
-  void register() {}
+  void register(BuildContext context) async {
+    //get the damn authservice bro
+    final auth = AuthService();
+
+    debugPrint("Register button clicked");
+
+    //if the password matches , it will create a user
+    if (_passwordController.text == _confirmPasswordController.text) {
+      try {
+        await auth.signUp(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+        await auth
+            .signOutRn(); //this is done inorder to show the login page immediately after the user registers
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(title: Text(e.toString())),
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            "पस्स्वर्ड मिलेन ?? Type गर्न नि जान्देनस साले खाते 😡🤬",
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +134,7 @@ KuraKani
 
               const SizedBox(height: 28),
               //login now button
-              MyButton(buttonText: "Register", onTap: register),
+              MyButton(buttonText: "Register", onTap: () => register(context)),
               const SizedBox(height: 25),
               //register now
               Row(
@@ -140,3 +173,5 @@ KuraKani
     );
   }
 }
+
+//laxmanthp@gmail.com
