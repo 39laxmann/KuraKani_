@@ -10,7 +10,10 @@ ThemeData lightMode = ThemeData(
   ),
 
   textTheme: const TextTheme(
-    headlineLarge: TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
+    headlineLarge: TextStyle(
+      fontSize: 42,
+      fontWeight: FontWeight.bold,
+    ), //for large text
     headlineMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
     headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
     bodyLarge: TextStyle(fontSize: 15),
