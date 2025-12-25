@@ -38,11 +38,15 @@ class ChatServices {
 
   //send message
 
-  Future<void> sendMessage(String receiverID, message) async {
+  Future<void> sendMessage(String receiverID, String message) async {
     //get current user info
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
+
+    if (receiverID.isEmpty) {
+      throw Exception("Receiver id is empty");
+    }
 
     //create new message
     Message newMessage = Message(
@@ -71,7 +75,7 @@ class ChatServices {
     //construct a chatroom ID for the two users
     List<String> ids = [userID, otherUserID];
     ids.sort();
-    String chatRoomID = ids.join('_');
+    String chatRoomID = ids.join("_");
 
     return _firestore
         .collection("chat_rooms")
