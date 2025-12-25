@@ -67,7 +67,7 @@ class ChatPage extends StatelessWidget {
         // return list view
         return ListView(
           children: snapshot.data!.docs
-              .map((doc) => _buildMessageList(doc))
+              .map((doc) => _buildMessageItem(doc))
               .toList(),
         );
       },
@@ -75,10 +75,26 @@ class ChatPage extends StatelessWidget {
   }
 
   //build message item
-  Widget _buildMessageList(DocumentSnapshot doc) {
+  Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-    return Text(data["message"]);
+    // is current user
+    bool isCurrentUser = data["senderId"] == _authService.getCurrentUser()!.uid;
+
+    // align the message to the right is the sender is the current user, otherwise left
+    var alignment = isCurrentUser
+        ? Alignment.centerRight
+        : Alignment.centerLeft;
+
+    return Container(
+      alignment: alignment,
+      child: Column(
+        crossAxisAlignment: isCurrentUser
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
+        children: [Text(data["message"])],
+      ),
+    );
   }
 
   // build message  input
