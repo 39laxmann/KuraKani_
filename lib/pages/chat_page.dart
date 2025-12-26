@@ -1,15 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:kurakani/components/chat_bubble.dart';
 import 'package:kurakani/components/my_textfields.dart';
 import 'package:kurakani/services/auth/auth_service.dart';
 import 'package:kurakani/services/chat/chat_services.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
 
   ChatPage({super.key, required this.receiverEmail, required this.receiverID});
 
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   //text controller
   final TextEditingController _messageController = TextEditingController();
 
@@ -17,16 +23,60 @@ class ChatPage extends StatelessWidget {
   final ChatServices _chatServices = ChatServices();
   final AuthService _authService = AuthService();
 
+  // for textfield focus
+  FocusNode myFocusNode = FocusNode();
+
+  // scroll controller
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // scroll when keyboard opens
+    myFocusNode.addListener(() {
+      if (myFocusNode.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollDown();
+        });
+      }
+    });
+    Future.delayed(const Duration(milliseconds: 500), () => scrollDown());
+  }
+
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // scroll to bottom
+  void scrollDown() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
   // send message
   void sendMessage() async {
     // send textfield is not empty send message
     if (_messageController.text.isNotEmpty) {
       await _chatServices.sendMessage(
-        receiverID,
+        widget.receiverID,
         _messageController.text,
       ); //send the damn msg
 
       _messageController.clear();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollDown();
+      });
     }
   }
 
@@ -34,7 +84,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(receiverEmail),
+        title: Text(widget.receiverEmail),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Column(
@@ -52,7 +102,7 @@ class ChatPage extends StatelessWidget {
   Widget _builMessageList() {
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
-      stream: _chatServices.getMessages(receiverID, senderID),
+      stream: _chatServices.getMessages(widget.receiverID, senderID),
       builder: (context, snapshot) {
         // error
         if (snapshot.hasError) {
@@ -64,8 +114,14 @@ class ChatPage extends StatelessWidget {
           return const Text("Loading.....");
         }
 
+        // scroll AFTER list is built
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollDown();
+        });
+
         // return list view
         return ListView(
+          controller: _scrollController,
           children: snapshot.data!.docs
               .map((doc) => _buildMessageItem(doc))
               .toList(),
@@ -79,40 +135,31 @@ class ChatPage extends StatelessWidget {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     // is current user
-    bool isCurrentUser = data["senderId"] == _authService.getCurrentUser()!.uid;
+    bool isCurrentUser = data["senderID"] == _authService.getCurrentUser()!.uid;
 
-    // align the message to the right is the sender is the current user, otherwise left
-    var alignment = isCurrentUser
-        ? Alignment.centerRight
-        : Alignment.centerLeft;
-
-    return Container(
-      alignment: alignment,
-      child: Column(
-        crossAxisAlignment: isCurrentUser
-            ? CrossAxisAlignment.center
-            : CrossAxisAlignment.start,
-        children: [Text(data["message"])],
-      ),
-    );
+    return ChatBubble(message: data['message'], isCurrentUser: isCurrentUser);
   }
 
   // build message  input
   Widget _buildUserInput() {
-    return Row(
-      children: [
-        // Textfield should take up the most space
-        Expanded(
-          child: MyTextfields(
-            hintText: "Type a message",
-            obscureText: false,
-            controller: _messageController,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 13.0),
+      child: Row(
+        children: [
+          // Textfield should take up the most space
+          Expanded(
+            child: MyTextfields(
+              myFocusNode: myFocusNode,
+              hintText: "Type a message",
+              obscureText: false,
+              controller: _messageController,
+            ),
           ),
-        ),
 
-        // send button
-        IconButton(onPressed: sendMessage, icon: const Icon(Icons.send)),
-      ],
+          // send button
+          IconButton(onPressed: sendMessage, icon: const Icon(Icons.send)),
+        ],
+      ),
     );
   }
 }

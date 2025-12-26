@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kurakani/components/user_tile.dart';
 import 'package:kurakani/pages/chat_page.dart';
+import 'package:kurakani/pages/search_user_page.dart';
 import 'package:kurakani/services/auth/auth_service.dart';
 import 'package:kurakani/components/my_drawer.dart';
 import 'package:kurakani/services/chat/chat_services.dart';
@@ -22,7 +23,17 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Home"),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        actions: [IconButton(onPressed: logout, icon: Icon(Icons.logout))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SearchUserPage()),
+              );
+            },
+            icon: Icon(Icons.search),
+          ),
+        ],
       ),
       drawer: MyDrawer(),
       body: _builUserList(),
