@@ -1,8 +1,8 @@
 # 💬 KuraKani – Real-Time Chat Application
 
-KuraKani is a modern, real-time chat application built using Flutter and Firebase.
+<p style="font-size:12px;">KuraKani is a modern, real-time chat application built using Flutter and Firebase.
 It allows users to securely register and log in, search for other users, and send instant one-to-one messages with real-time updates.
-The app also features dark mode support, a clean and intuitive interface, and a well-organized architecture using Provider for state management and StreamBuilder for real-time Firestore data.
+The app also features dark mode support, a clean and intuitive interface, and a well-organized architecture using Provider for state management and StreamBuilder for real-time Firestore data.</p>
 ---
 
 
