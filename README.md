@@ -10,14 +10,14 @@ The project focuses on clean UI, real-time messaging, and proper state handling,
 ## 📸 App Screenshots
 
 ### Login & Registration
-![Login Screen](assets/login.png)
-![Register Screen](assets/sign_up.png)
+![Login Screen](assets/images/login.png)
+![Register Screen](assets/images/sign_up.png)
 
 ### Home & Chat
-![Home Screen](assets/home.png)
-![Dark Mode](assets/dark_mode.png)
-![Chat page](assests/chat_page.png)
-![Dark_Mode_chat_page](assets/dark_mode_page.png)
+![Home Screen](assets/images/home.png)
+![Dark Mode](assets/images/dark_mode.png)
+![Chat page](assests/images/chat_page.png)
+![Dark_Mode_chat_page](assets/images/dark_mode_page.png)
 
 ## 📌 Features
 
@@ -60,6 +60,7 @@ The project focuses on clean UI, real-time messaging, and proper state handling,
 
 ## 📂 Project Structure 
 
+```
 lib
 ├── components
 │   ├── chat_bubble.dart
@@ -89,7 +90,7 @@ lib
     ├── dark_mode.dart
     ├── light_mode.dart
     └── theme_provider.dart
-
+```
 
 
 
