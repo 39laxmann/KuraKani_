@@ -16,7 +16,7 @@ The project focuses on clean UI, real-time messaging, and proper state handling,
 ### Home & Chat
 ![Home Screen](assets/images/home.png)
 ![Dark Mode](assets/images/dark_mode.png)
-![Chat page](assests/images/chat_page.png)
+![Chat page](assets/images/chat_page.png)
 ![Dark_Mode_chat_page](assets/images/dark_mode_page.png)
 
 ## 📌 Features
